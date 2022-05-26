@@ -40,20 +40,20 @@ model.add(keras.layers.Flatten())
 model.add(keras.layers.Dense(200, activation='relu'))
 model.add(keras.layers.Dense(200, activation='softmax'))
 
+# Model train
 model.summary()
-
 model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics='accuracy')
+history = model.fit(x_train, y_train, epochs=3)
 
-history = model.fit(x_train, y_train, epochs=5)
-
+# Evaluate model
 loss, accuracy = model.evaluate(x_valid, y_valid)
 print("loss = ", loss)
 print("accuracy = ", accuracy)
 
+# Test
 test_batch = x_valid[:2]
-
 preds = model.predict(test_batch)
-
 print("preds = ", preds)
 print(np.argmax(preds[0]))
 print(np.argmax(preds[1]))
+
