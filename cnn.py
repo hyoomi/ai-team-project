@@ -25,25 +25,29 @@ x_train, x_valid, y_train, y_valid = train_test_split(x_load, y_load, test_size=
 x_train = x_train / 255.0
 x_valid = x_valid / 255.0
 
+# [Note]
+# 합성곱 연산: input data에 filter를 적용한 것
+# 패딩: 합성곱 연산 수행 전 데이터 주변을 특정값으로 채워 늘리는 것
+# stride: input data에 filter를 적용하는 위치의 간격격
 # Create Model
 model = keras.Sequential()
-model.add(keras.layers.Conv2D(100, kernel_size=(3, 3), activation='relu', input_shape=(100,100,3)))
+model.add(keras.layers.Conv2D(32, kernel_size=(3, 3), activation='relu', input_shape=(100,100,3)))
 model.add(keras.layers.MaxPooling2D(2, 2))
 model.add(keras.layers.Dropout(0.2))
 
-model.add(keras.layers.Conv2D(200, kernel_size=(3, 3), activation='relu'))
+model.add(keras.layers.Conv2D(64, kernel_size=(3, 3), activation='relu'))
 model.add(keras.layers.MaxPooling2D(2, 2))
-model.add(keras.layers.Conv2D(200, kernel_size=(3, 3), activation='relu'))
+model.add(keras.layers.Conv2D(64, kernel_size=(3, 3), activation='relu'))
 model.add(keras.layers.Dropout(0.2))
 
 model.add(keras.layers.Flatten())
-model.add(keras.layers.Dense(200, activation='relu'))
-model.add(keras.layers.Dense(200, activation='softmax'))
+model.add(keras.layers.Dense(64, activation='relu'))
+model.add(keras.layers.Dense(10, activation='softmax'))
 
 # Model train
 model.summary()
 model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics='accuracy')
-history = model.fit(x_train, y_train, epochs=3)
+history = model.fit(x_train, y_train, epochs=10)
 
 # Evaluate model
 loss, accuracy = model.evaluate(x_valid, y_valid)
