@@ -7,6 +7,14 @@ import os
 warnings.filterwarnings('ignore')
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
+print("===== LoadSampleData =====")
+
+# Load data
+x_sample = np.load('C:/Users/gyals/PycharmProjects/team/x_sample.npy')
+y_sample = np.load('C:/Users/gyals/PycharmProjects/team/y_sample.npy')
+
+print(x_sample.shape)
+
 print("===== CNN =====")
 
 # Load data
@@ -54,15 +62,23 @@ model.add(keras.layers.Dense(10, activation='softmax'))
 # Model train
 model.summary()
 model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
-history = model.fit(x_train, y_train, epochs=10)
+history = model.fit(x_train, y_train, epochs=20, validation_data=(x_valid, y_valid))
+
+# Save model and history
+# model.save('cnn1_model.h5')
+# np.save('cnn1_history.npy', history.history)
 
 # Evaluate model
-loss, accuracy = model.evaluate(x_valid, y_valid)
+loss, accuracy = model.evaluate(x_sample, y_sample)
 print("loss = ", loss)
 print("accuracy = ", accuracy)
 
+# predict = model.predict(x_sample, batch_size=32)
+# print(predict)
+
 # Visualize accuracy and loss
 plt.plot(history.history['accuracy'])
+plt.plot(history.history['val_accuracy'])
 plt.title('model accuracy')
 plt.ylabel('accuracy')
 plt.xlabel('epoch')
@@ -70,11 +86,11 @@ plt.legend(['train', 'test'], loc='upper left')
 plt.show()
 
 plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
 plt.title('model loss')
 plt.ylabel('loss')
 plt.xlabel('epoch')
 plt.legend(['train', 'test'], loc='upper left')
 plt.show()
-
 
 
