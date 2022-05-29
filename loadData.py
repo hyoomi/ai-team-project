@@ -2,6 +2,46 @@ import os
 import numpy as np
 import cv2
 import mediapipe as mp
+import matplotlib.pyplot as plt
+
+print("===== LoadSampleData =====")
+
+# Data
+label = []  # 각 label별 data수를 저장
+x_load = []  # (100,100,3) data가 저장
+y_load = []  # class 저장 (0 ~ 9)
+
+# Load data
+for i in range(10):
+    # set path
+    path = f'C:/Users/gyals/PycharmProjects/Digit/Sample/{i}/'  # 경로 입력
+    os.chdir(path)  # 경로 폴더로 들어감
+    files = os.listdir(path)  # 폴더 안에 있는 파일의 이름을 가져옴
+    print(files)
+    # save data
+    for file in files:
+        f = cv2.imread(file, cv2.IMREAD_COLOR)  # 하나의 파일을 np형태로 읽는다 (옵션은 COLOR)
+        if f.shape != (100, 100, 3):
+            print("error", file)
+            continue
+        x_load.append(f)  # 읽은 파일 추가
+        y_load.append(i)  # label 기록
+    label.append(len(files))  # 각 label별 개수를 저장
+
+label = [0,0,0,0,0,0,0,0,0,0]
+for i in y_load:
+    label[i] += 1
+print(label)
+
+# Print data images
+plt.title(y_load[0])
+plt.imshow(x_load[0])
+plt.show()
+
+# Save data
+np.save('C:/Users/gyals/PycharmProjects/team/x_sample.npy', x_load)
+np.save('C:/Users/gyals/PycharmProjects/team/y_sample.npy', y_load)
+
 
 print("===== LoadData =====")
 
