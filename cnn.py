@@ -14,10 +14,10 @@ class CNN:
     def __init__(self, conv_kernel_size=3, dense_units=256, epoch=10, use_sample=True):
         self.use_sample = use_sample
         # Load data: x_load (2059, 100, 100, 3) / x_sample (150, 100, 100, 3)
-        self.x_load = np.load('C:/Users/gyals/PycharmProjects/team/x_load.npy')  # 기존 이미지 셋
-        self.y_load = np.load('C:/Users/gyals/PycharmProjects/team/y_load.npy')
-        self.x_sample = np.load('C:/Users/gyals/PycharmProjects/team/x_sample.npy')  # 직접 촬영한 이미지 셋
-        self.y_sample = np.load('C:/Users/gyals/PycharmProjects/team/y_sample.npy')
+        self.x_load = np.load('x_load.npy')  # 기존 이미지 셋
+        self.y_load = np.load('y_load.npy')
+        self.x_sample = np.load('x_sample.npy')  # 직접 촬영한 이미지 셋
+        self.y_sample = np.load('y_sample.npy')
 
         # Split data: x_train (1853, 100, 100, 3) / x_valid(206, 100, 100, 3)
         # load data를 split하여 trian data와 valid data 정의

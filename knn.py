@@ -5,57 +5,55 @@ from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 warnings.filterwarnings('ignore')
 
-print("===== KNN =====")
+class KNN:
+    #  파라미터: data_type - 0 (x,y)관절 좌표 데이터 사용 / 1 (x,y,z)관절 좌표 데이터 사용 / else 원본 이미지 데이터 사용
+    def __init__(self, data_type=0):
+        self.data_type = data_type
+        # Load data
+        self.x_point2 = np.load('x_point2.npy')  # (x, y) 관절 좌표 데이터 로드
+        self.y_point = np.load('y_point.npy')
 
-# Load data
-x_point2 = np.load('C:/Users/gyals/PycharmProjects/team/x_point2.npy')
-y_point = np.load('C:/Users/gyals/PycharmProjects/team/y_point.npy')
+        self.x_point3 = np.load('x_point3.npy')  # (x, y, z) 관절 좌표 데이터 로드
 
-x_load = np.load('C:/Users/gyals/PycharmProjects/team/x_load.npy')
-y_load = np.load('C:/Users/gyals/PycharmProjects/team/y_load.npy')
+        self.x_load = np.load('x_load.npy') # 원본 이미지 데이터 로드
+        self.y_load = np.load('y_load.npy')
 
-x_sample = np.load('C:/Users/gyals/PycharmProjects/team/x_sample.npy')
-y_sample = np.load('C:/Users/gyals/PycharmProjects/team/y_sample.npy')
+        # Flatten data
+        self.x_point2 = self.x_point2.reshape(1803, 21*2)
+        self.x_load = self.x_load.reshape(2059, 100*100*3)
 
-# Flatten data
-x_point2 = x_point2.reshape(1803, 21*2)
-x_load = x_load.reshape(2059, 100*100*3)
-x_sample = x_sample.reshape(150, 100*100*3)
+        # Split data
+        self.x_train2, self.x_valid2, self.y_train2, self.y_valid2 = \
+            train_test_split(self.x_point2, self.y_point, test_size=0.2, shuffle=True, stratify=self.y_point, random_state=34)
+        self.x_train3, self.x_valid3, self.y_train3, self.y_valid3 = \
+            train_test_split(self.x_point3, self.y_point, test_size=0.2, shuffle=True, stratify=self.y_point, random_state=34)
+        self.x_train, self.x_valid, self.y_train, self.y_valid = \
+            train_test_split(self.x_load, self.y_load, test_size=0.2, shuffle=True, stratify=self.y_load, random_state=34)
+
+        # KNN Model
+        k_list = range(3, 40, 2)
+        accuracies = []
+        label = ' '
+        for k in k_list:
+            classifier = KNeighborsClassifier(n_neighbors=k)  # KNN 모델
+            if data_type == 0:
+                classifier.fit(self.x_train2, self.y_train2)  # KNN 모델 학습
+                accuracies.append(classifier.score(self.x_valid2, self.y_valid2))  # KNN 모델 평가
+                label = '(x,y)'
+            elif data_type == 1:
+                classifier.fit(self.x_train3, self.y_train3)
+                accuracies.append(classifier.score(self.x_valid3, self.y_valid3))
+                label = '(x,y,z)'
+            else:
+                classifier.fit(self.x_load, self.y_load)
+                accuracies.append(classifier.score(self.x_valid, self.y_valid))
+                label = 'original img'
+        # K 변화에 따른 정확도 그래프
+        plt.plot(k_list, accuracies, marker='o', linewidth=2, label=label)
+        plt.xlabel("k")
+        plt.ylabel("Accuracy")
+        plt.legend()
+        plt.title("KNN Accuracy")
+        plt.show()
 
 
-# Split data
-x_train2, x_valid2, y_train2, y_valid2 = \
-    train_test_split(x_point2, y_point, test_size=0.2, shuffle=True, stratify=y_point, random_state=34)
-x_train, x_valid, y_train, y_valid = \
-    train_test_split(x_load, y_load, test_size=0.2, shuffle=True, stratify=y_load, random_state=34)
-
-# KNN
-# k_list = range(1, 40, 2)
-# accuracies = []
-# for k in k_list:
-#   classifier = KNeighborsClassifier(n_neighbors = k)
-#   classifier.fit(x_train2, y_train2)
-#   accuracies.append(classifier.score(x_valid2, y_valid2))
-# plt.plot(k_list, accuracies, marker='o', linewidth=2, label='point')
-
-# k_list = range(1, 40, 2)
-# accuracies = []
-# for k in k_list:
-#   classifier = KNeighborsClassifier(n_neighbors = k)
-#   classifier.fit(x_load, y_load)
-#   accuracies.append(classifier.score(x_sample, y_sample))
-# plt.plot(k_list, accuracies, marker='o', linewidth=2, label='sample img')
-
-k_list = range(1, 40, 2)
-accuracies = []
-for k in k_list:
-  classifier = KNeighborsClassifier(n_neighbors = k)
-  classifier.fit(x_train, y_train)
-  accuracies.append(classifier.score(x_valid, y_valid))
-plt.plot(k_list, accuracies, marker='o', linewidth=2, label='original img')
-
-plt.xlabel("k")
-plt.ylabel("Accuracy")
-plt.legend()
-plt.title("KNN Accuracy")
-plt.show()
