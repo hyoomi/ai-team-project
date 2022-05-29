@@ -20,6 +20,7 @@ class KNN:
 
         # Flatten data
         self.x_point2 = self.x_point2.reshape(1803, 21*2)
+        self.x_point3 = self.x_point3.reshape(1803, 21*3)
         self.x_load = self.x_load.reshape(2059, 100*100*3)
 
         # Split data
